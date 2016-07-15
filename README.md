@@ -7,6 +7,7 @@ For Puppet Employee Use Only
 ## Rough User Guide
 
 - Clone it
+- Run `Prep.bat`
 - Copy `Settings.Example.ps1` to `Settings.ps1`
 - Edit `Settings.ps` with your GitHub Token ID and email address
 - Run `CreateEmailReport.ps1`

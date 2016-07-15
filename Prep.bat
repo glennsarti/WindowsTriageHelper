@@ -5,9 +5,9 @@ SETLOCAL
 SET ThisDir=%~dp0
 SET PSMods=%THISDIR%Modules
 
-SET GithubMod=%PSMODS%\Github
+SET JiraMod=%PSMODS%\Jira
 
-REM RD "%GithubMod%" /S /Q > NUL
-REM git clone https://github.com/Iristyle/Posh-GitHub.git "%GithubMod%" --depth 1
-REM REM Delete the .git folder
-REM RD "%GithubMod%\.git" /S /Q > NUL
+RD "%JiraMod%" /S /Q > NUL
+git clone https://github.com/replicaJunction/PSJira.git "%JiraMod%" --depth 1
+REM Delete the .git folder
+RD "%JiraMod%\.git" /S /Q > NUL

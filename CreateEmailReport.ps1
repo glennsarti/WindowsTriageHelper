@@ -1,4 +1,11 @@
-param([string]$GITHUB_TOKEN = '', [string]$EmailAddress = '', [string]$Queryfilter = '.+')
+param(
+  [string]$GITHUB_TOKEN = '',
+  [string]$EmailAddress = '',
+  [string]$PuppetPassUsername = '',
+  [string]$PuppetPassPassword = '',
+  [string]$Queryfilter = '.+'
+)
+
 $ErrorActionPreference = 'Stop'
 $ProgressPreference='SilentlyContinue'
 
@@ -9,6 +16,8 @@ if (Test-Path -Path $Settings) { . $Settings }
 # Use global settings if script settings are specific
 if ($GITHUB_TOKEN -eq '') { $GITHUB_TOKEN = $global:GITHUB_TOKEN }
 if ($EmailAddress -eq '') { $EmailAddress = $global:EmailAddress }
+if ($PuppetPassUsername -eq '') { $PuppetPassUsername = $global:PuppetPassUsername }
+if ($PuppetPassPassword -eq '') { $PuppetPassPassword = $global:PuppetPassPassword }
 
 $results = @()
 
@@ -19,7 +28,9 @@ Get-ChildItem -Path "$($PSScriptRoot)\Query*.ps1" | ? { $_ -match $Queryfilter} 
   Write-Host "Running $_ ..."
 
   $props = @{
-    'GITHUB_TOKEN' = $GITHUB_TOKEN 
+    'GITHUB_TOKEN' = $GITHUB_TOKEN
+    'PuppetPassUsername' = $PuppetPassUsername
+    'PuppetPassPassword' = $PuppetPassPassword
   }
 
   try {
