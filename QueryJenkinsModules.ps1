@@ -8,7 +8,7 @@ $ProgressPreference='SilentlyContinue'
 
 . ./CommonFunc.PS1
 
-$rootURL = 'https://jenkins-modules.puppetlabs.com/'
+$rootURL = 'https://jenkins-modules.puppetlabs.com'
 
 Function Invoke-Request($url) {
   $webProps = @{

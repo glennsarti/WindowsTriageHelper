@@ -69,7 +69,7 @@ $PublicRepoList | % {
             $Sev = 'Medium'; $message = 'Requires followup'
           } else {
             $Sev = 'Debug'; $message = 'No need for followup'
-          } 
+          }
         }
 
       }
@@ -80,13 +80,13 @@ $PublicRepoList | % {
       $Sev = ''
       if ($thisIssue.title -match 'WIP') {
         $Sev = 'Debug'; $message = 'Work In Progress only'
-      } else {        
+      } else {
         if ($thisIssue.comments -eq 0) {
           $Sev = 'High'; $message = 'Windows Team needs to comment'
         } else {
           Write-Verbose "Querying comments for PR $($thisIssue.ID) ..."
           $lastComment = Get-GitHubIssueComments -GitHubIssue $thisIssue | Sort-Object updated_at | Select -Last 1
-          
+
           $isLastCommentWindows = ($WindowsTeam -contains $lastComment.user.login)
           $LastCommentDate = Get-Date "$($lastComment.updated_at)"
 
@@ -97,7 +97,7 @@ $PublicRepoList | % {
               $Sev = 'Medium'; $message = 'Requires followup'
             } else {
               $Sev = 'Debug'; $message = 'No need for followup'
-            } 
+            }
           }
         }
       }
