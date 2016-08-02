@@ -50,7 +50,7 @@ Function Invoke-Request($url) {
         'notbuilt_anime' { $Message = "Job is in progress"; $Sev = 'Info' }
         'aborted'        { $Message = "Job was aborted"; $Sev = 'Info' }
         'notbuilt'       { $Message = "Job has not been run"; $Sev = 'Warn' }
-        'red '           { $Message = "Job has failed"; $Sev = 'Error' }
+        'red'            { $Message = "Job has failed"; $Sev = 'Error' }
         default { $Message = "Unknown job color of $($jobObject.color)"; $Sev = 'Error' }
       }
       New-QueryOuput -Source 'Jenkins' -Severity $Sev -Message "$($Message): $($projectView.name)/$($branchView.name)/$($jobObject.name)" -URL $branchView.URL
