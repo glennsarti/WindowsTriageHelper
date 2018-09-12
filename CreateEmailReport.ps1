@@ -3,6 +3,8 @@ param(
   [string]$EmailAddress = '',
   [string]$PuppetPassUsername = '',
   [string]$PuppetPassPassword = '',
+  [string]$GmailUsername = '',
+  [string]$GmailPassword = '',
   [string]$Queryfilter = '.+'
 )
 
@@ -18,6 +20,8 @@ if ($GITHUB_TOKEN -eq '') { $GITHUB_TOKEN = $global:GITHUB_TOKEN }
 if ($EmailAddress -eq '') { $EmailAddress = $global:EmailAddress }
 if ($PuppetPassUsername -eq '') { $PuppetPassUsername = $global:PuppetPassUsername }
 if ($PuppetPassPassword -eq '') { $PuppetPassPassword = $global:PuppetPassPassword }
+if ($GmailUsername -eq '') { $GmailUsername = $global:GmailUsername }
+if ($GmailPassword -eq '') { $GmailPassword = $global:GmailPassword }
 
 $results = @()
 
@@ -34,18 +38,19 @@ Get-ChildItem -Path "$($PSScriptRoot)\Query*.ps1" | ? { $_ -match $Queryfilter} 
   }
 
   try {
-    $results += (. $_ @props -Verbose) 
+    $results += (. $_ @props -Verbose)
   }
   catch [System.Exception] {
-    throw $_    
+    throw $_
   }
 }
 
 
 $html = @"
+<!DOCTYPE html>
 <html>
 <head>
-<style>
+<style type="text/css">
 body { font-family: tahoma, sans serif; }
 
 div.sevtitle { font-size:20pt; font-weight:bold; }
@@ -114,9 +119,18 @@ div.debugdiv { color: black; }
 
 $html += "</center></body></html>"
 
-Send-MailMessage -To $EmailAddress -Subject "Windows Triage Report - $((Get-Date).ToString('dd MMMM yyyy HH:mm'))" `
-  -From $EmailAddress -Body $html -BodyAsHtml -SmtpServer "ASPMX.L.GOOGLE.COM"
+$SecGmailPassword = ConvertTo-SecureString $GmailPassword -AsPlainText -Force
+$GmailCred = New-Object System.Management.Automation.PSCredential ($GmailUsername, $SecGmailPassword)
+[System.Net.ServicePointManager]::SecurityProtocol = 'Tls,TLS11,TLS12'
 
-# $html | Out-File 'C:\Temp\test.html'
+Write-Host "Sending email..."
+$TempFilename = Join-Path -Path $ENV:TEMP -ChildPath 'WindowsTriage.html'
+$html | Set-Content $TempFilename -Encoding UTF8 -Force -Confirm:$false
+
+Send-MailMessage -To $EmailAddress -Subject "Windows Triage Report - $((Get-Date).ToString('dd MMMM yyyy HH:mm'))" `
+  -From $EmailAddress -Body $html -BodyAsHtml -SmtpServer "smtp.gmail.com" -UseSsl -Port 587 -Credential $GmailCred `
+  -Attachments $TempFilename
+
+Remove-Item -Path $TempFilename -Force -Confirm:$false | Out-Null
 
 Write-Host "Email sent to $EmailAddress"

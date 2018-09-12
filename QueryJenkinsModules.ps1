@@ -8,7 +8,7 @@ $ProgressPreference='SilentlyContinue'
 
 . ./CommonFunc.PS1
 
-$rootURL = 'https://jenkins-modules.puppetlabs.com'
+$rootURL = 'https://jenkins-master-prod-1.delivery.puppetlabs.net/'
 
 Function Invoke-Request($url) {
   $webProps = @{
@@ -21,14 +21,12 @@ Function Invoke-Request($url) {
     $webProps.URI = "$($rootURL)/$url"
   }
 
-  $response = Invoke-WebRequest @webProps
+  $response = Invoke-WebRequest -UseBasicParsing @webProps
   $response | ConvertFrom-JSON
 }
 
 
-
-
-(Invoke-Request "view/3.%20windows%20only/api/json").views | ? { $_.name -ne 'ad hoc' } | % {
+(Invoke-Request "/view/modules/view/windows/api/json").views | ? { $_.name -ne '_adhoc' } | % {
   $projectView = $_
   Write-Verbose "Checking $($projectView.name)"
 
@@ -49,7 +47,7 @@ Function Invoke-Request($url) {
         'red_anime'      { $Message = "Job is in progress"; $Sev = 'Info' }
         'notbuilt_anime' { $Message = "Job is in progress"; $Sev = 'Info' }
         'aborted'        { $Message = "Job was aborted"; $Sev = 'Info' }
-        'notbuilt'       { $Message = "Job has not been run"; $Sev = 'Warn' }
+        'notbuilt'       { $Message = "Job has not been run"; $Sev = 'Info' }
         'red'            { $Message = "Job has failed"; $Sev = 'Error' }
         default { $Message = "Unknown job color of $($jobObject.color)"; $Sev = 'Error' }
       }

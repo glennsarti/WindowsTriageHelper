@@ -14,6 +14,8 @@ $OUTPUT_SOURCE = 'GitHub'
 
 $ENV:GITHUB_OAUTH_TOKEN = $GITHUB_TOKEN
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 Import-Module "$($PSScriptRoot)\VendoredModules\Github\Posh-Github.psm1" -Force
 
 $PublicRepoList = @(
@@ -21,19 +23,21 @@ $PublicRepoList = @(
   "puppetlabs-chocolatey",
   "puppetlabs-dism",
   "puppetlabs-dsc",
+  "puppetlabs-dsc_lite",
+  "puppetlabs-iis",
   "puppetlabs-powershell",
   "puppetlabs-reboot",
   "puppetlabs-registry",
-  "puppetlabs-wsus_client"
+  "puppetlabs-scheduled_task",
+  "puppetlabs-sqlserver",
+  "puppetlabs-wsus_client",
+  "puppetlabs-windows"
 )
 
 $PrivateRepoList = @(
-  "puppetlabs-sqlserver"
 )
 
-$WindowsTeam = @('glennsarti','ferventcoder','iristyle','jpogran')
-
-
+$WindowsTeam = @('glennsarti', 'iristyle', 'jpogran', 'randomnoun7', 'thoughtcrhyme', 'michaeltlombardi', 'clairecadman')
 
 $PrivateRepoList | % {
   $RepoName = $_
@@ -103,7 +107,6 @@ $PublicRepoList | % {
       }
       New-QueryOuput -Source $OUTPUT_SOURCE -Severity $Sev -Message "($RepoName PR) $($Message): `"$($thisIssue.title)`"" -URL $thisIssue.pull_request.html_url
     }
+    Start-Sleep -Milliseconds 100 # Throttle our connections to stop API rate limiting
   }
 }
-
-

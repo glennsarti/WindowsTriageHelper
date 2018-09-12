@@ -14,6 +14,8 @@ $ProgressPreference = 'SilentlyContinue'
 
 . ./CommonFunc.PS1
 
+Add-Type -AssemblyName System.Web
+
 Import-Module "$PSScriptRoot\Modules\Jira\PSJira\PSJira.psd1" -Force -Verbose:$false
 
 $jiraServer = 'https://tickets.puppetlabs.com'
@@ -25,7 +27,7 @@ $SecPassword = ConvertTo-SecureString -String $PuppetPassPassword -AsPlainText -
 $JiraCred = New-Object System.Management.Automation.PSCredential ($PuppetPassUsername, $SecPassword)
 
 # Check for issues in Triage
-Get-JiraIssue -Query 'project = "MODULES" and Sprint = "Windows Triage"' -Credential $JiraCred | % { 
+Get-JiraIssue -Query 'project = "MODULES" and Sprint = "Windows Grooming"' -Credential $JiraCred | % {
   $thisIssue = $_
 
   $Sev = ''
